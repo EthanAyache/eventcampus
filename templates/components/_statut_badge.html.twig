@@ -1,0 +1,10 @@
+{# Badge de statut : ouvert / complet / annule / termine #}
+{% if evenement.statut == 'annule' %}
+    <span class="badge text-bg-secondary"><i class="bi bi-x-circle me-1"></i>Annulé</span>
+{% elseif evenement.statut == 'termine' %}
+    <span class="badge text-bg-dark"><i class="bi bi-clock-history me-1"></i>Terminé</span>
+{% elseif evenement.statut == 'complet' or evenement.places_disponibles <= 0 %}
+    <span class="badge text-bg-danger"><i class="bi bi-slash-circle me-1"></i>Complet</span>
+{% else %}
+    <span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Ouvert</span>
+{% endif %}

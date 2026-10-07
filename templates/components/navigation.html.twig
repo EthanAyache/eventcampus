@@ -1,0 +1,59 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set categorie_active = app.request.attributes.get('_route_params').categorie ?? null %}
+{% set nav_categories = {
+    culturel:   { label: 'Culturel',   icon: 'palette' },
+    sportif:    { label: 'Sportif',    icon: 'trophy' },
+    associatif: { label: 'Associatif', icon: 'people' },
+    festif:     { label: 'Festif',     icon: 'stars' },
+} %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ path('app_accueil') }}">
+            <i class="bi bi-calendar-event me-1"></i> EventCampus
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Ouvrir le menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ route == 'app_accueil' ? 'active' }}" href="{{ path('app_accueil') }}">
+                        <i class="bi bi-house me-1"></i>Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ route in ['app_evenement', 'app_evenement_details'] ? 'active' }}" href="{{ path('app_evenement') }}">
+                        <i class="bi bi-list-ul me-1"></i>Événements
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ route == 'app_evenement_categories' ? 'active' }}" href="#"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-tags me-1"></i>Catégories
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        {% for slug, cat in nav_categories %}
+                            <li>
+                                <a class="dropdown-item {{ categorie_active == slug ? 'active' }}"
+                                   href="{{ path('app_evenement_categories', { categorie: slug }) }}">
+                                    <i class="bi bi-{{ cat.icon }} me-2 text-cat-{{ slug }}"></i>{{ cat.label }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ path('app_evenement') }}">Toutes les catégories</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ route == 'app_statistique' ? 'active' }}" href="{{ path('app_statistique') }}">
+                        <i class="bi bi-bar-chart me-1"></i>Statistiques
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

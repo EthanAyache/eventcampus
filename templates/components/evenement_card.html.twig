@@ -1,0 +1,50 @@
+{#
+    Card d'un événement.
+    Utilisation : {% include 'components/evenement_card.html.twig' with { evenement: e } %}
+#}
+{% set icons = { culturel: 'palette', sportif: 'trophy', associatif: 'people', festif: 'stars' } %}
+{% set restantes = evenement.places_disponibles %}
+{% set taux = evenement.places_totales > 0 ? ((evenement.places_totales - restantes) / evenement.places_totales * 100)|round : 0 %}
+
+<div class="card h-100 shadow-sm border-0 event-card {{ evenement.statut in ['annule', 'termine'] ? 'event-card--inactive' }}">
+    <div class="position-relative">
+        <img src="{{ asset('images/evenements/' ~ evenement.image) }}"
+             onerror="this.onerror=null;this.src='https://picsum.photos/seed/eventcampus{{ evenement.id }}/600/340';"
+             class="card-img-top event-card__img" alt="{{ evenement.titre }}">
+        <span class="badge bg-cat-{{ evenement.categorie }} position-absolute top-0 start-0 m-2 text-capitalize">
+            <i class="bi bi-{{ icons[evenement.categorie] ?? 'tag' }} me-1"></i>{{ evenement.categorie }}
+        </span>
+        <span class="position-absolute top-0 end-0 m-2">
+            {% include 'components/_statut_badge.html.twig' with { evenement: evenement } %}
+        </span>
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title mb-2">{{ evenement.titre }}</h5>
+        <ul class="list-unstyled small text-body-secondary mb-3">
+            <li><i class="bi bi-calendar3 me-2"></i>{{ evenement.date_debut|date('d/m/Y') }} à {{ evenement.date_debut|date('H\\hi') }}</li>
+            <li><i class="bi bi-geo-alt me-2"></i>{{ evenement.lieu }}</li>
+            <li>
+                <i class="bi bi-ticket-perforated me-2"></i>
+                {% if evenement.prix > 0 %}{{ evenement.prix|number_format(2, ',', ' ') }} €{% else %}Gratuit{% endif %}
+            </li>
+        </ul>
+
+        {% if evenement.statut == 'ouvert' and restantes > 0 %}
+            <div class="mt-auto">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span>{{ restantes }} place{{ restantes > 1 ? 's' }} restante{{ restantes > 1 ? 's' }}</span>
+                    <span class="text-body-secondary">{{ taux }}% rempli</span>
+                </div>
+                <div class="progress mb-3" role="progressbar" aria-valuenow="{{ taux }}" aria-valuemin="0" aria-valuemax="100" style="height: 6px;">
+                    <div class="progress-bar {{ taux >= 80 ? 'bg-warning' : 'bg-success' }}" style="width: {{ taux }}%"></div>
+                </div>
+            </div>
+        {% endif %}
+
+        <a href="{{ path('app_evenement_details', { id: evenement.id }) }}"
+           class="btn btn-outline-primary btn-sm {{ not (evenement.statut == 'ouvert' and restantes > 0) ? 'mt-auto' }}">
+            Voir le détail <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+</div>

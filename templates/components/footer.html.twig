@@ -1,0 +1,16 @@
+<footer class="bg-dark text-white-50 mt-5 py-4">
+    <div class="container">
+        <div class="row gy-3 align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <span class="fw-bold text-white"><i class="bi bi-calendar-event me-1"></i> EventCampus</span>
+                <span class="d-block small">La plateforme des événements étudiants du campus, par le BDE.</span>
+            </div>
+            <div class="col-md-6 text-center text-md-end small">
+                <a href="{{ path('app_evenement') }}" class="link-light link-underline-opacity-0 me-3">Événements</a>
+                <a href="{{ path('app_statistique') }}" class="link-light link-underline-opacity-0 me-3">Statistiques</a>
+                <a href="{{ path('app_api') }}" class="link-light link-underline-opacity-0">API</a>
+                <span class="d-block mt-1">&copy; {{ 'now'|date('Y') }} BDE Campus</span>
+            </div>
+        </div>
+    </div>
+</footer>

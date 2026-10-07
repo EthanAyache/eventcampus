@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="d-flex flex-column min-vh-100">
+        {% include 'components/navigation.html.twig' %}
+
+        <main class="flex-grow-1">
+            {# Messages flash #}
+            {% set flash_types = { success: 'check-circle', danger: 'exclamation-octagon', warning: 'exclamation-triangle', info: 'info-circle' } %}
+            {% if app.flashes is not empty %}
+                <div class="container mt-4">
+                    {% for type, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show shadow-sm" role="alert">
+                                <i class="bi bi-{{ flash_types[type] ?? 'info-circle' }} me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        {% include 'components/footer.html.twig' %}
+    </div>
+{% endblock %}
