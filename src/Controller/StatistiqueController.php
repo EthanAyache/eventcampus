@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Evenements;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,7 +13,7 @@ final class StatistiqueController extends AbstractController
     public function index(): Response
     {
         return $this->render('statistique/index.html.twig', [
-            'controller_name' => 'StatistiqueController',
+            'evenements' => (new Evenements())->getEvents(),
         ]);
     }
 }
