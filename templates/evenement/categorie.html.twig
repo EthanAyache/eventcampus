@@ -1,0 +1,53 @@
+{% extends 'layout/main.html.twig' %}
+
+{% set categorie = categorie|default(app.request.attributes.get('categorie')) %}
+
+{% block title %}{{ categorie|capitalize }} - EventCampus{% endblock %}
+
+{% block content %}
+    {% set evenements = evenements|default([]) %}
+    {% set infos = {
+        culturel:   { icon: 'palette', texte: 'Expositions, concerts, théâtre : nourrissez votre curiosité.' },
+        sportif:    { icon: 'trophy',  texte: 'Tournois et défis sportifs entre étudiants.' },
+        associatif: { icon: 'people',  texte: "Engagez-vous et découvrez la vie associative du campus." },
+        festif:     { icon: 'stars',   texte: 'Les soirées incontournables de l\'année.' },
+    } %}
+
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_accueil') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_evenement') }}">Événements</a></li>
+                <li class="breadcrumb-item active text-capitalize" aria-current="page">{{ categorie }}</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="stat-icon bg-cat-{{ categorie }} text-white">
+                <i class="bi bi-{{ infos[categorie].icon ?? 'tag' }}"></i>
+            </div>
+            <div>
+                <h1 class="h2 mb-0">Événements <span class="text-cat-{{ categorie }}">{{ categorie }}s</span></h1>
+                <p class="text-body-secondary mb-0">{{ infos[categorie].texte ?? '' }}</p>
+            </div>
+        </div>
+
+        {% include 'components/_filtres_categories.html.twig' with { categorie: categorie } %}
+
+        {% if evenements is empty %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x display-4 text-body-secondary"></i>
+                <p class="lead mt-3">Aucun événement dans cette catégorie pour le moment.</p>
+                <a href="{{ path('app_evenement') }}" class="btn btn-primary">Voir tous les événements</a>
+            </div>
+        {% else %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                {% for e in evenements %}
+                    <div class="col">
+                        {% include 'components/evenement_card.html.twig' with { evenement: e } %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

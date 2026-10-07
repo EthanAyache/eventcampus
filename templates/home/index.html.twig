@@ -1,0 +1,77 @@
+{% extends 'layout/main.html.twig' %}
+
+{% block title %}Accueil - EventCampus{% endblock %}
+
+{% block content %}
+    {% set evenements = evenements|default([]) %}
+    {% set ouverts = evenements|filter(e => e.statut == 'ouvert' and e.places_disponibles > 0) %}
+    {% set prochains = ouverts|sort((a, b) => a.date_debut <=> b.date_debut)|slice(0, 3) %}
+
+    {# Hero #}
+    <section class="hero text-white py-5 mb-5">
+        <div class="container py-lg-4">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="badge rounded-pill text-bg-light text-primary mb-3">
+                        <i class="bi bi-mortarboard me-1"></i>Le BDE vous présente
+                    </span>
+                    <h1 class="display-5 fw-bold">Tous les événements du campus, au même endroit.</h1>
+                    <p class="lead opacity-75 mb-4">Soirées, tournois, expositions, forums : trouvez votre prochain événement étudiant en un clin d'œil.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ path('app_evenement') }}" class="btn btn-light btn-lg">
+                            <i class="bi bi-calendar-week me-1"></i>Voir les événements
+                        </a>
+                        <a href="{{ path('app_statistique') }}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-bar-chart me-1"></i>Statistiques
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        {# Statistiques générales #}
+        <div class="row g-3 mb-5">
+            {% set chiffres = [
+                { label: 'Événements', valeur: evenements|length, icon: 'calendar-event', color: 'primary' },
+                { label: 'Inscriptions ouvertes', valeur: ouverts|length, icon: 'unlock', color: 'success' },
+                { label: 'Places restantes', valeur: evenements|reduce((c, e) => c + (e.statut == 'ouvert' ? e.places_disponibles : 0), 0), icon: 'ticket-perforated', color: 'warning' },
+                { label: 'Catégories', valeur: 4, icon: 'tags', color: 'info' },
+            ] %}
+            {% for c in chiffres %}
+                <div class="col-6 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <div class="stat-icon bg-{{ c.color }}-subtle text-{{ c.color }}-emphasis">
+                                <i class="bi bi-{{ c.icon }}"></i>
+                            </div>
+                            <div>
+                                <div class="fs-3 fw-bold lh-1">{{ c.valeur }}</div>
+                                <div class="small text-body-secondary">{{ c.label }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Prochains événements #}
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h2 class="h3 mb-0">Prochains événements</h2>
+            <a href="{{ path('app_evenement') }}" class="link-primary small">Tout voir <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        {% if prochains is empty %}
+            <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Aucun événement à venir pour le moment.</div>
+        {% else %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for e in prochains %}
+                    <div class="col">
+                        {% include 'components/evenement_card.html.twig' with { evenement: e } %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

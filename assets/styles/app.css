@@ -1,3 +1,84 @@
+:root {
+    --cat-culturel: #8e44ad;
+    --cat-sportif: #16a085;
+    --cat-associatif: #2980b9;
+    --cat-festif: #e67e22;
+}
+
 body {
-    background-color: white;
+    background-color: #f6f7fb;
+}
+
+/* Hero de la page d'accueil */
+.hero {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #6610f2 100%);
+}
+
+/* Icône ronde des chiffres clés */
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.4rem;
+}
+
+/* Couleurs des catégories */
+.bg-cat-culturel   { background-color: var(--cat-culturel) !important; color: #fff; }
+.bg-cat-sportif    { background-color: var(--cat-sportif) !important; color: #fff; }
+.bg-cat-associatif { background-color: var(--cat-associatif) !important; color: #fff; }
+.bg-cat-festif     { background-color: var(--cat-festif) !important; color: #fff; }
+
+.text-cat-culturel   { color: var(--cat-culturel) !important; }
+.text-cat-sportif    { color: var(--cat-sportif) !important; }
+.text-cat-associatif { color: var(--cat-associatif) !important; }
+.text-cat-festif     { color: var(--cat-festif) !important; }
+
+/* Boutons de filtre par catégorie */
+.btn-cat-culturel   { --c: var(--cat-culturel); }
+.btn-cat-sportif    { --c: var(--cat-sportif); }
+.btn-cat-associatif { --c: var(--cat-associatif); }
+.btn-cat-festif     { --c: var(--cat-festif); }
+
+[class*="btn-cat-"] {
+    color: var(--c);
+    border-color: var(--c);
+    background-color: #fff;
+}
+
+[class*="btn-cat-"]:hover,
+[class*="btn-cat-"].active {
+    color: #fff;
+    background-color: var(--c);
+    border-color: var(--c);
+}
+
+/* Cards d'événements */
+.event-card {
+    transition: transform .2s ease, box-shadow .2s ease;
+    overflow: hidden;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .12) !important;
+}
+
+.event-card__img {
+    height: 180px;
+    object-fit: cover;
+}
+
+.event-card--inactive .event-card__img {
+    filter: grayscale(100%);
+    opacity: .6;
+}
+
+/* Page de détail */
+.event-show__img {
+    max-height: 420px;
+    object-fit: cover;
 }

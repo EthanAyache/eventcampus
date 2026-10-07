@@ -1,0 +1,105 @@
+{% extends 'layout/main.html.twig' %}
+
+{% block title %}{{ evenement.titre }} - EventCampus{% endblock %}
+
+{% block content %}
+    {% set restantes = evenement.places_disponibles %}
+    {% set inscrits = evenement.places_totales - restantes %}
+    {% set taux = evenement.places_totales > 0 ? (inscrits / evenement.places_totales * 100)|round : 0 %}
+
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_accueil') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_evenement') }}">Événements</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_evenement_categories', { categorie: evenement.categorie }) }}" class="text-capitalize">{{ evenement.categorie }}</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ evenement.titre }}</li>
+            </ol>
+        </nav>
+
+        {# Bandeau selon le statut #}
+        {% if evenement.statut == 'annule' %}
+            <div class="alert alert-secondary d-flex align-items-center"><i class="bi bi-x-circle fs-5 me-2"></i>Cet événement a été annulé.</div>
+        {% elseif evenement.statut == 'termine' %}
+            <div class="alert alert-dark d-flex align-items-center"><i class="bi bi-clock-history fs-5 me-2"></i>Cet événement est terminé.</div>
+        {% elseif evenement.statut == 'complet' or restantes <= 0 %}
+            <div class="alert alert-danger d-flex align-items-center"><i class="bi bi-slash-circle fs-5 me-2"></i>Cet événement est complet, il n'y a plus de places disponibles.</div>
+        {% elseif taux >= 80 %}
+            <div class="alert alert-warning d-flex align-items-center"><i class="bi bi-exclamation-triangle fs-5 me-2"></i>Dépêchez-vous, il ne reste que {{ restantes }} place{{ restantes > 1 ? 's' }} !</div>
+        {% endif %}
+
+        <div class="row g-4">
+            {# Colonne principale #}
+            <div class="col-lg-8">
+                <img src="{{ asset('images/evenements/' ~ evenement.image) }}"
+                     onerror="this.onerror=null;this.src='https://picsum.photos/seed/eventcampus{{ evenement.id }}/1200/600';"
+                     class="img-fluid rounded-3 shadow-sm w-100 event-show__img mb-4 {{ evenement.statut in ['annule', 'termine'] ? 'opacity-50' }}"
+                     alt="{{ evenement.titre }}">
+
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                    <span class="badge bg-cat-{{ evenement.categorie }} text-capitalize">{{ evenement.categorie }}</span>
+                    {% include 'components/_statut_badge.html.twig' %}
+                </div>
+                <h1 class="h2 {{ evenement.statut == 'annule' ? 'text-decoration-line-through text-body-secondary' }}">{{ evenement.titre }}</h1>
+                <p class="text-body-secondary mb-4"><i class="bi bi-person-badge me-1"></i>Organisé par <strong>{{ evenement.organisateur }}</strong></p>
+
+                <h2 class="h5">Description</h2>
+                <p class="lead fs-6">{{ evenement.description }}</p>
+            </div>
+
+            {# Colonne infos #}
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-lg-top" style="top: 80px;">
+                    <div class="card-body p-4">
+                        <div class="fs-2 fw-bold mb-3">
+                            {% if evenement.prix > 0 %}{{ evenement.prix|number_format(2, ',', ' ') }} €{% else %}Gratuit{% endif %}
+                        </div>
+
+                        <ul class="list-unstyled mb-4">
+                            <li class="d-flex mb-3">
+                                <i class="bi bi-calendar3 text-primary fs-5 me-3"></i>
+                                <div>
+                                    <div class="small text-body-secondary">Début</div>
+                                    {{ evenement.date_debut|date('d/m/Y') }} à {{ evenement.date_debut|date('H\\hi') }}
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3">
+                                <i class="bi bi-calendar-check text-primary fs-5 me-3"></i>
+                                <div>
+                                    <div class="small text-body-secondary">Fin</div>
+                                    {{ evenement.date_fin|date('d/m/Y') }} à {{ evenement.date_fin|date('H\\hi') }}
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3">
+                                <i class="bi bi-geo-alt text-primary fs-5 me-3"></i>
+                                <div>
+                                    <div class="small text-body-secondary">Lieu</div>
+                                    {{ evenement.lieu }}
+                                </div>
+                            </li>
+                            <li class="d-flex">
+                                <i class="bi bi-people text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="small text-body-secondary">Places</div>
+                                    {{ inscrits }} / {{ evenement.places_totales }} inscrits
+                                    <div class="progress mt-2" role="progressbar" aria-valuenow="{{ taux }}" aria-valuemin="0" aria-valuemax="100" style="height: 8px;">
+                                        <div class="progress-bar {{ taux >= 100 ? 'bg-danger' : (taux >= 80 ? 'bg-warning' : 'bg-success') }}" style="width: {{ taux }}%"></div>
+                                    </div>
+                                    {% if evenement.statut == 'ouvert' and restantes > 0 %}
+                                        <div class="small mt-1 text-success fw-semibold">{{ restantes }} place{{ restantes > 1 ? 's' }} restante{{ restantes > 1 ? 's' }}</div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        </ul>
+
+                        <a href="{{ path('app_evenement') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-left me-1"></i>Retour aux événements
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
